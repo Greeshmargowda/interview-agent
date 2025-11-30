@@ -114,7 +114,7 @@ class InterviewOrchestrator:
             self._transition_to_next_phase()
         
         # Check if interview is complete
-        if self.current_phase == 'closing' and self.questions_asked >= 1:
+        if self.current_phase == 'closing' and self.questions_in_current_phase >= 1:
             return {
                 'interview_complete': True,
                 'previous_question': self.current_question,
