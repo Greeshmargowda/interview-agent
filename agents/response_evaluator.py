@@ -30,7 +30,7 @@ class ResponseEvaluatorAgent:
         self.job_description = job_description
         
         # Initialize Claude
-        api_key = os.getenv('ANTHROPIC_API_KEY', 'your-api-key-here')
+        api_key = os.getenv('ANTHROPIC_API_KEY', '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')
         self.client = anthropic.Anthropic(api_key=api_key)
     
     def evaluate_response(self, question: str, answer: str, 

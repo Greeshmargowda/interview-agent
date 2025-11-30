@@ -1,12 +1,9 @@
-// API Configuration
-const API_BASE_URL = window.location.hostname === 'localhost' 
-    ? 'http://127.0.0.1:8000' 
-    : 'https://interview-agent-production.up.railway.app'; // Update after backend deployment
+// API Configuration - Update with your Railway URL
+const API_BASE_URL = 'https://interview-agent-production.up.railway.app'; // Your Railway URL here
 
 // Global state
 let currentInterviewId = null;
 let questionCount = 0;
-let totalQuestionsExpected = 9; // 1+3+2+2+1
 let scores = [];
 
 // Utility Functions
@@ -62,7 +59,7 @@ async function startInterview(event) {
             // Update UI
             document.getElementById('displayName').textContent = formData.candidate_name;
             document.getElementById('currentPhase').textContent = capitalizeFirst(data.phase);
-            document.getElementById('questionCounter').textContent = `Question ${questionCount} of ${totalQuestionsExpected}`;
+            document.getElementById('questionCounter').textContent = `Question ${questionCount}`;
             
             // Add first question to chat
             addMessageToChat('interviewer', data.first_question);
@@ -127,7 +124,7 @@ async function submitAnswer() {
             } else {
                 // Continue interview
                 questionCount++;
-                document.getElementById('questionCounter').textContent = `Question ${questionCount} of ${totalQuestionsExpected}`;
+                document.getElementById('questionCounter').textContent = `Question ${questionCount}`;
                 
                 // Update phase if changed
                 updatePhase(data.phase);
