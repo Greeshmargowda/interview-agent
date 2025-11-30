@@ -39,7 +39,17 @@ class InterviewOrchestrator:
         self.current_phase = 'introduction'
         self.phase_index = 0
         self.questions_asked = 0
-        self.max_questions_per_phase = 3
+        self.questions_in_current_phase = 0
+        
+        # Different questions per phase
+        self.max_questions_per_phase = {
+            'introduction': 1,      # Only 1 intro question
+            'technical': 3,         # 3 technical questions
+            'behavioral': 2,        # 2 behavioral questions
+            'problem_solving': 2,   # 2 problem solving questions
+            'closing': 1            # 1 closing question
+        }
+        
         self.current_question = None
         self.interview_history = []
         
@@ -91,9 +101,14 @@ class InterviewOrchestrator:
         self.analytics.add_interaction(self.current_phase, evaluation)
         
         self.questions_asked += 1
+        self.questions_in_current_phase += 1
         
         # Determine if we should move to next phase
         should_transition = self._should_transition_phase()
+        
+        if should_transition:
+            self._transition_to_next_phase()
+            self.questions_in_current_phase = 0  # Reset for new phase
         
         if should_transition:
             self._transition_to_next_phase()
@@ -129,13 +144,16 @@ class InterviewOrchestrator:
     
     def _should_transition_phase(self) -> bool:
         """Determine if we should move to next interview phase"""
-        # Transition after max questions per phase
-        if self.questions_asked >= self.max_questions_per_phase * (self.phase_index + 1):
+        # Get max questions for current phase
+        max_for_phase = self.max_questions_per_phase.get(self.current_phase, 3)
+        
+        # Transition after max questions for this specific phase
+        if self.questions_in_current_phase >= max_for_phase:
             return True
         
-        # Or if performance is exceptionally good/bad
-        recent_scores = self.analytics.get_recent_scores(3)
-        if len(recent_scores) >= 3:
+        # Or if performance is exceptionally good/bad (skip phase early)
+        recent_scores = self.analytics.get_recent_scores(2)
+        if len(recent_scores) >= 2:
             avg_score = sum(recent_scores) / len(recent_scores)
             # Skip phase if doing very well or very poorly
             if avg_score >= 90 or avg_score <= 30:

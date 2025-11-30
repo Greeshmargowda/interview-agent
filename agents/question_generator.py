@@ -31,6 +31,9 @@ class QuestionGeneratorAgent:
         self.vector_store = VectorStore()
         self.vector_store.load_question_bank()
         
+        # Track asked questions to avoid repetition
+        self.asked_questions = set()
+        
         # Question templates by phase
         self.phase_templates = {
             'introduction': [
@@ -90,6 +93,9 @@ Interview History: {context}
 
 Similar questions from question bank:
 {self._format_similar_questions(similar_questions)}
+
+IMPORTANT: Do NOT ask questions similar to these already asked questions:
+{self._format_asked_questions()}
 """
         
         # Add adaptive component based on previous evaluation
@@ -123,6 +129,10 @@ Return ONLY the question, nothing else."""
             )
             
             question = message.content[0].text.strip()
+            
+            # Add to asked questions to avoid repetition
+            self.asked_questions.add(question.lower())
+            
             return question
             
         except Exception as e:
@@ -140,6 +150,14 @@ Return ONLY the question, nothing else."""
             formatted.append(f"{i}. {q}")
         
         return "\n".join(formatted)
+    
+    def _format_asked_questions(self) -> str:
+        """Format already asked questions to avoid repetition"""
+        if not self.asked_questions:
+            return "None yet."
+        
+        return "\n".join([f"- {q}" for q in list(self.asked_questions)])
+    
     
     def _get_fallback_question(self, phase: str) -> str:
         """Get a fallback template question if LLM fails"""
