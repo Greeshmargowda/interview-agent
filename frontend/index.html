@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interview Agent</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 40 40">
+                    <circle cx="20" cy="20" r="18" fill="#4F46E5"/>
+                    <path d="M20 10 L20 30 M10 20 L30 20" stroke="white" stroke-width="3"/>
+                </svg>
+                <h1>AI Interview Agent</h1>
+            </div>
+            <div class="header-actions">
+                <button class="btn-secondary" onclick="showDashboard()">Dashboard</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Start Interview Form -->
+            <div id="startScreen" class="screen active">
+                <div class="welcome-section">
+                    <h2>Welcome to AI Interview Agent</h2>
+                    <p>Experience an intelligent, adaptive interview powered by multi-agent AI system</p>
+                    
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">🎯</div>
+                            <h3>Adaptive Questions</h3>
+                            <p>Questions adjust based on your responses</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📊</div>
+                            <h3>Real-time Evaluation</h3>
+                            <p>Get instant feedback on your answers</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🤖</div>
+                            <h3>Multi-Agent AI</h3>
+                            <p>Powered by advanced AI architecture</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-container">
+                    <h3>Start Your Interview</h3>
+                    <form id="startForm" onsubmit="startInterview(event)">
+                        <div class="form-group">
+                            <label for="candidateName">Full Name *</label>
+                            <input type="text" id="candidateName" required placeholder="John Doe">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="candidateEmail">Email *</label>
+                            <input type="email" id="candidateEmail" required placeholder="john@example.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="jobRole">Job Role *</label>
+                            <select id="jobRole" required>
+                                <option value="">Select a role</option>
+                                <option value="Software Engineer">Software Engineer</option>
+                                <option value="Data Scientist">Data Scientist</option>
+                                <option value="Product Manager">Product Manager</option>
+                                <option value="DevOps Engineer">DevOps Engineer</option>
+                                <option value="UI/UX Designer">UI/UX Designer</option>
+                                <option value="Business Analyst">Business Analyst</option>
+                                <option value="Marketing Manager">Marketing Manager</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="experienceYears">Years of Experience *</label>
+                            <input type="number" id="experienceYears" required min="0" max="50" placeholder="5">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="jobDescription">Job Description</label>
+                            <textarea id="jobDescription" rows="4" placeholder="Briefly describe the role responsibilities..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="resumeSummary">Resume Summary (Optional)</label>
+                            <textarea id="resumeSummary" rows="3" placeholder="Key highlights from your resume..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary" id="startBtn">
+                            Start Interview
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Interview Screen -->
+            <div id="interviewScreen" class="screen">
+                <div class="interview-container">
+                    <div class="interview-header">
+                        <div class="interview-info">
+                            <span class="candidate-name" id="displayName"></span>
+                            <span class="interview-phase" id="currentPhase">Introduction</span>
+                        </div>
+                        <div class="interview-progress">
+                            <span id="questionCounter">Question 1</span>
+                        </div>
+                    </div>
+
+                    <div class="interview-chat" id="chatContainer">
+                        <!-- Messages will be added here dynamically -->
+                    </div>
+
+                    <div class="interview-input">
+                        <div class="input-wrapper">
+                            <textarea 
+                                id="answerInput" 
+                                placeholder="Type your answer here..." 
+                                rows="3"
+                                onkeydown="handleKeyPress(event)"
+                            ></textarea>
+                            <button class="btn-send" onclick="submitAnswer()" id="sendBtn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="input-hint">Press Ctrl + Enter to submit</div>
+                    </div>
+                </div>
+
+                <div class="interview-sidebar">
+                    <div class="sidebar-section">
+                        <h4>Interview Progress</h4>
+                        <div class="progress-phases">
+                            <div class="phase-item active" data-phase="introduction">
+                                <div class="phase-dot"></div>
+                                <span>Introduction</span>
+                            </div>
+                            <div class="phase-item" data-phase="technical">
+                                <div class="phase-dot"></div>
+                                <span>Technical</span>
+                            </div>
+                            <div class="phase-item" data-phase="behavioral">
+                                <div class="phase-dot"></div>
+                                <span>Behavioral</span>
+                            </div>
+                            <div class="phase-item" data-phase="problem_solving">
+                                <div class="phase-dot"></div>
+                                <span>Problem Solving</span>
+                            </div>
+                            <div class="phase-item" data-phase="closing">
+                                <div class="phase-dot"></div>
+                                <span>Closing</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h4>Real-time Feedback</h4>
+                        <div id="feedbackArea" class="feedback-area">
+                            <p class="feedback-placeholder">Your feedback will appear here after each answer</p>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h4>Current Score</h4>
+                        <div class="score-display">
+                            <div class="score-circle">
+                                <span id="currentScore">--</span>
+                            </div>
+                            <p class="score-label">Average Score</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Report Screen -->
+            <div id="reportScreen" class="screen">
+                <div class="report-container">
+                    <div class="report-header">
+                        <h2>Interview Complete! 🎉</h2>
+                        <p>Here's your comprehensive interview report</p>
+                    </div>
+
+                    <div class="report-content" id="reportContent">
+                        <!-- Report will be populated dynamically -->
+                    </div>
+
+                    <div class="report-actions">
+                        <button class="btn-primary" onclick="downloadReport()">Download Report</button>
+                        <button class="btn-secondary" onclick="location.reload()">New Interview</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Screen -->
+            <div id="dashboardScreen" class="screen">
+                <div class="dashboard-container">
+                    <h2>Interview Dashboard</h2>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">📊</div>
+                            <div class="stat-value" id="totalInterviews">0</div>
+                            <div class="stat-label">Total Interviews</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">✅</div>
+                            <div class="stat-value" id="completedInterviews">0</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">⏳</div>
+                            <div class="stat-value" id="inProgressInterviews">0</div>
+                            <div class="stat-label">In Progress</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">⭐</div>
+                            <div class="stat-value" id="avgScore">0</div>
+                            <div class="stat-label">Average Score</div>
+                        </div>
+                    </div>
+
+                    <div class="interviews-table">
+                        <h3>Recent Interviews</h3>
+                        <table id="interviewsTable">
+                            <thead>
+                                <tr>
+                                    <th>Candidate</th>
+                                    <th>Role</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="interviewsTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <button class="btn-secondary" onclick="hideDashboard()">Back to Home</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="spinner"></div>
+            <p>Processing...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
