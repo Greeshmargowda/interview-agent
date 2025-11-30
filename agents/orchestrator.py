@@ -41,8 +41,14 @@ class InterviewOrchestrator:
         self.questions_asked = 0
         self.questions_in_current_phase = 0
         
-        # 3 questions per phase
-        self.questions_per_phase = 3
+        # Different questions per phase
+        self.max_questions_per_phase = {
+            'introduction': 1,      # Only 1 intro question
+            'technical': 3,         # 3 technical questions
+            'behavioral': 2,        # 2 behavioral questions
+            'problem_solving': 2,   # 2 problem solving questions
+            'closing': 1            # 1 closing question
+        }
         
         self.current_question = None
         self.interview_history = []
@@ -108,7 +114,7 @@ class InterviewOrchestrator:
             self._transition_to_next_phase()
         
         # Check if interview is complete
-        if self.current_phase == 'closing' and self.questions_in_current_phase >= self.questions_per_phase:
+        if self.current_phase == 'closing' and self.questions_asked >= 1:
             return {
                 'interview_complete': True,
                 'previous_question': self.current_question,
@@ -138,9 +144,20 @@ class InterviewOrchestrator:
     
     def _should_transition_phase(self) -> bool:
         """Determine if we should move to next interview phase"""
-        # Transition after 3 questions in current phase
-        if self.questions_in_current_phase >= self.questions_per_phase:
+        # Get max questions for current phase
+        max_for_phase = self.max_questions_per_phase.get(self.current_phase, 3)
+        
+        # Transition after max questions for this specific phase
+        if self.questions_in_current_phase >= max_for_phase:
             return True
+        
+        # Or if performance is exceptionally good/bad (skip phase early)
+        recent_scores = self.analytics.get_recent_scores(2)
+        if len(recent_scores) >= 2:
+            avg_score = sum(recent_scores) / len(recent_scores)
+            # Skip phase if doing very well or very poorly
+            if avg_score >= 90 or avg_score <= 30:
+                return True
         
         return False
     
