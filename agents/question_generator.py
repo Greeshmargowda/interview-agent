@@ -167,10 +167,8 @@ Return ONLY the question, nothing else."""
         template = templates[0]
         
         if phase == 'technical':
-            if 'developer' in self.job_role.lower() or 'engineer' in self.job_role.lower():
-                return "Can you explain your approach to writing clean, maintainable code? Give me a specific example from your experience."
-            else:
-                return f"What technical skills are most important for a {self.job_role}, and how have you developed them?"
+            return "Can you explain your approach to writing clean, maintainable code? Give me a specific example from your experience."
+            
         
         elif phase == 'behavioral':
             return "Tell me about a time when you faced a significant challenge at work. How did you handle it?"
