@@ -29,9 +29,13 @@ class ResponseEvaluatorAgent:
         self.job_role = job_role
         self.job_description = job_description
         
-        # Initialize Claude
-        api_key = os.getenv('ANTHROPIC_API_KEY', 'your-api-key-here')
-        self.client = anthropic.Anthropic(api_key=api_key)
+        # Initialize Claude API
+        api_key = os.getenv('ANTHROPIC_API_KEY', '')
+        if not api_key:
+            print("⚠️  Warning: ANTHROPIC_API_KEY not set. Using simple evaluation.")
+            self.client = None
+        else:
+            self.client = anthropic.Anthropic(api_key=api_key)
     
     def evaluate_response(self, question: str, answer: str, 
                          phase: str, context: str) -> Dict:

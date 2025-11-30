@@ -23,9 +23,13 @@ class QuestionGeneratorAgent:
         self.job_description = job_description
         self.experience_years = experience_years
         
-        # Initialize Claude (you can also use OpenAI GPT-4)
-        api_key = os.getenv('ANTHROPIC_API_KEY', 'your-api-key-here')
-        self.client = anthropic.Anthropic(api_key=api_key)
+        # Initialize Claude API
+        api_key = os.getenv('ANTHROPIC_API_KEY', '')
+        if not api_key:
+            print("⚠️  Warning: ANTHROPIC_API_KEY not set. Using fallback questions.")
+            self.client = None
+        else:
+            self.client = anthropic.Anthropic(api_key=api_key)
         
         # Initialize vector store for RAG
         self.vector_store = VectorStore()
@@ -167,8 +171,10 @@ Return ONLY the question, nothing else."""
         template = templates[0]
         
         if phase == 'technical':
-            return "Can you explain your approach to writing clean, maintainable code? Give me a specific example from your experience."
-            
+            if 'developer' in self.job_role.lower() or 'engineer' in self.job_role.lower():
+                return "Can you explain your approach to writing clean, maintainable code? Give me a specific example from your experience."
+            else:
+                return f"What technical skills are most important for a {self.job_role}, and how have you developed them?"
         
         elif phase == 'behavioral':
             return "Tell me about a time when you faced a significant challenge at work. How did you handle it?"
